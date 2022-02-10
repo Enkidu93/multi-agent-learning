@@ -16,7 +16,7 @@ class GridWorld1(World):
         self.state = (2,0)
         self.episode_complete = False
     
-    def step(self, action) -> tuple: # returns tuple where tuple[0] is reward, tuple[1] is new state, tuple[2] is episode_completed
+    def step(self, action) -> tuple: # returns tuple where tuple[0] is reward, tuple[1] is new state, tuple[2] is episode_complete
 
         ACTIONS = self.actions
         ACTION_VECTORS = self.action_vectors
@@ -37,7 +37,7 @@ class GridWorld1(World):
         
         new_state = (self.state[0] + ACTION_VECTORS[true_action][0], self.state[1] + ACTION_VECTORS[true_action][1])
 
-        if World.isInBounds(new_state):
+        if GridWorld1.isInBounds(new_state):
             self.state = new_state
         
         if self.state == (0,3):
@@ -47,7 +47,7 @@ class GridWorld1(World):
             reward = -1
             self.episode_complete = True
         
-        return (reward, self.state, self.episode_complete)
+        return (reward, self.episode_complete)
     
     def visualize(self):
         out = ".___.___.___.___.\n"

@@ -6,7 +6,7 @@ world = GridWorld1()
 agent = Agent(world,epsilon=0.99999,alpha=0.99999,gamma=1,decay_epsilon=0.99999,decay_alpha=.99999)
 
 VISUALIZE = False
-N = 100000
+N = 100
 
 if VISUALIZE:
     world.visualize()
