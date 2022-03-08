@@ -1,6 +1,7 @@
 from world import World
 import random
 import json
+from ast import literal_eval
 
 class Agent:
 
@@ -17,7 +18,9 @@ class Agent:
         if qvals_filename is None:
             self.q_values:dict[tuple,dict[int,float]] = dict()
         else:
-            self.q_values = json.load(qvals_filename)
+            with open(qvals_filename,'r') as q:
+                data = json.loads(q.read())
+                self.q_values = dict((literal_eval(k),v) for k,v in data.items())
 
     def reset(self,reset_qvalues=False,reset_epsilon_to=0):
         self.world.reset()

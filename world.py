@@ -16,3 +16,7 @@ class World(ABC):
     @abstractmethod
     def visualize(self):
         pass
+
+    @abstractmethod
+    def process(self, message):
+        pass
