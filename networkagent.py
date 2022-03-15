@@ -12,9 +12,8 @@ class NetworkAgent(Agent):
         return super().save(filename)
     def reset(self, reset_qvalues=False, reset_epsilon_to=0):
         return super().reset(reset_qvalues, reset_epsilon_to)
-    
 
-    def take_action(self):
+    def take_action(self) -> tuple[str,list]:
         self.prev_state = self.world.state
 
         action = self.get_best_action()
@@ -47,4 +46,4 @@ class NetworkAgent(Agent):
         self.q_values[self.prev_state][self.prev_action] = self.q_values.get(self.prev_state, {randval:0}).get(self.prev_action,{randval:0}) + self.alpha*(reward + self.gamma*(best_next_q) - self.q_values[self.prev_state][self.prev_action])
 
         # return update
-        return new_state.get(self.name)
+        return (self.name, new_state.get(self.name))

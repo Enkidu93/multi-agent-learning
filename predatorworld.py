@@ -50,7 +50,19 @@ class PredatorWorld(World):
             new_state = self.dictionary.get(agent.name)
             new_state[0] += distance_stepped*cos(new_state[2]*pi/180)
             new_state[1] += distance_stepped*sin(new_state[2]*pi/180)
+        reward = -0.01
+        if self.hasCaughtPrey(agent):
+            reward = 30
+            self.episode_complete = True
         # MOVING PREY???  SEPARATE METHOD???
+        # def move_prey(): ?
+        return (reward, self.dictionary, self.episode_complete)
     
     def process(self, message_content):
-        pass #TODO
+        pass
+        #TODO
+    
+    def hasCaughtPrey(self, agent:NetworkAgent,tol=2):
+        if abs(self.dictionary.get(agent.name)[0]-self.dictionary.get("Prey")[0]) < tol and abs(self.dictionary.get(agent.name)[1]-self.dictionary.get("Prey")[1]) < tol:
+            return True
+        return False

@@ -23,8 +23,6 @@ class Machine:
         self.clock = t
         while((not self.messages.empty()) and self.messages.queue[0][0] <= self.clock):
             self.world.process(self.messages.get()[1])
-        update = self.agent.take_action() #need to alter returns to get "message.content"
+        update = self.agent.take_action() #TODO need to alter returns to get "message.content" 
         for connection in self.connections.values():
             connection.send(update)
-
-        
