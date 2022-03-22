@@ -81,7 +81,7 @@ class DeepCFAgent(CFAgent):
     
     def refit_model(self):
         data = DeepCFAgent.convert(self.q_values)
-        self.value_approximator.model.fit([data[0],data[1]], data[1],verbose=0)
+        self.value_approximator.model.fit([data[0],data[1]], data[1],verbose=0) #[2]?
         self.has_model = True
     
     @staticmethod

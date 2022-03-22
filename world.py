@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 class World(ABC):
     @abstractmethod
     def __init__(self):
-        pass
+        self.actions:list
 
     @abstractmethod    
     def reset(self):
