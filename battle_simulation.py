@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 def no_delay():
     return 0
 
-N = 30_000
+N = 10_000
 ALPHA = 0.1
 EPSILON = 0.1
 

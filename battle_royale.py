@@ -107,7 +107,7 @@ class BattleRoyale(World):
         for a in self.agents:
             if a != agent and foe1_abs_position is None:
                 foe1_abs_position = self.dictionary.get(a.name)
-            elif foe2_abs_position is None:
+            elif a != agent and foe2_abs_position is None:
                 foe2_abs_position = self.dictionary.get(a.name)
         
         foe1_x = foe1_abs_position[0]

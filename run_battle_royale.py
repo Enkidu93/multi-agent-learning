@@ -9,7 +9,7 @@ SCALE = 1
 SCREEN_WIDTH = SCALE*500
 SCREEN_HEIGHT = SCALE*500
 ALPHA = 0.1
-EPSILON = 0.1
+EPSILON = 0.0
 
 def no_delay():
     return 0
@@ -118,6 +118,7 @@ class BattleRoyaleWindow(arcade.Window):
             raw_pos = get_new_positions(self.machines,self.t)
             if raw_pos is None:
                 self.quit = True
+                # print(self.agents[0].q_values)
                 return
             new_positions = [e.copy() for e in raw_pos.copy()]
             
