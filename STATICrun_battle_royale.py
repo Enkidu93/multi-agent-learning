@@ -1,13 +1,13 @@
 import arcade
-from math import sqrt, sin, pi, cos, degrees, floor
+from math import sqrt, sin, pi, cos, degrees
 import battle_royale as b
 import machine as m
 import networkagent as n
 from tensorflow.keras.models import load_model
 
 SCALE = 1
-SCREEN_WIDTH = floor(SCALE*500)
-SCREEN_HEIGHT = floor(SCALE*500)
+SCREEN_WIDTH = SCALE*500
+SCREEN_HEIGHT = SCALE*500
 ALPHA = 0.1
 EPSILON = 0.0
 
@@ -86,13 +86,9 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("HIGHERKILLREWARD"+m1.name)
-        a2.value_approximator.model = load_model("HIGHERKILLREWARD"+m2.name)
-        a3.value_approximator.model = load_model("HIGHERKILLREWARD"+m3.name)
+        a1.value_approximator.model = load_model("STATIC"+m1.name)
 
         a1.has_model = True
-        a2.has_model = True
-        a3.has_model = True
     
     def on_draw(self):
 
@@ -104,7 +100,7 @@ class BattleRoyaleWindow(arcade.Window):
         arcade.draw_circle_outline(x, y, radius, arcade.color.ORIOLES_ORANGE, border_width=3)
         self.agent_reps.draw()
         if self.quit:
-            arcade.draw_text("Game is complete...",SCALE*(SCREEN_WIDTH/2.5),SCALE*(3*SCREEN_HEIGHT/4),arcade.color.WHITE,SCALE*10,SCALE*20,'left')
+            arcade.draw_text("Game is complete...",SCALE*(SCREEN_WIDTH/2.5),SCALE*(3*SCREEN_HEIGHT/4),arcade.color.WHITE,10,20,'left')
         arcade.finish_render()
 
     def update(self,delta_time):
@@ -136,10 +132,10 @@ class BattleRoyaleWindow(arcade.Window):
         pass
 
 def get_new_positions(machines:list[m.Machine], t) -> list:
-    for machine in machines:
-        machine.activate(t)
-        if(machine.world.episode_complete):
-            return None
+    machine = machines[0]
+    machine.activate(t)
+    if(machine.world.episode_complete):
+        return None
     return list(machines[0].world.dictionary.values())
 
 
