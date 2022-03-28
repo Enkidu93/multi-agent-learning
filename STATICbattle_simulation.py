@@ -7,15 +7,13 @@ from tensorflow.keras.models import load_model
 def no_delay():
     return 0
 
-N = 50_000
-ALPHA = 0.6
-EPSILON = 0.6
-ALPHA_DECAY = 0.9999
-EPSILON_DECAY = 0.9999
+N = 10_000
+ALPHA = 0.1
+EPSILON = 0.1
 
-a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
-a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
-a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
+a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA)
+a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA)
+a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA)
 agents = [a1,a2,a3]
 
 w1 = b.BattleRoyale(agents)
@@ -67,17 +65,16 @@ for i in range(N):
     quit = False
     t = 0
     while(t<10_000 and not quit):
-        for machine in machines:
-            machine.activate(t)
-            if(machine.world.episode_complete):
-                quit = True
+        machine = m1
+        machine.activate(t)
+        if(machine.world.episode_complete):
+            quit = True
         t+=30
 
     avg_t+=t
 
-    for machine in machines:
-        avg_r+=machine.agent.reward
-        machine.world.reset()
+    avg_r+=m1.agent.reward
+    m1.world.reset()
 
     if i%interval == 0 and i!=0:
         x.append(i)
@@ -86,8 +83,7 @@ for i in range(N):
         avg_t = 0
         avg_r = 0
         print(i)
-        for machine in machines:
-            machine.agent.refit_model()
+        m1.agent.refit_model()
 
 
 plt.plot(x,y)
@@ -100,6 +96,6 @@ plt.xlabel("Time")
 plt.ylabel("Average reward across all agents")
 plt.show()
 
-for machine in machines:
-    machine.agent.value_approximator.model.save("HIGHERKILLREWARD"+machine.name)
+machine = m1
+machine.agent.value_approximator.model.save("STATIC"+machine.name)
 

@@ -1,21 +1,22 @@
 import battle_royale as b
 import machine as m
 import networkagent as n
+import passiveBRagent as p
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 def no_delay():
     return 0
 
-N = 50_000
+N = 10_000
 ALPHA = 0.6
 EPSILON = 0.6
-ALPHA_DECAY = 0.9999
-EPSILON_DECAY = 0.9999
+ALPHA_DECAY = 0.9995
+EPSILON_DECAY = 0.9995
 
 a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
-a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
-a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
+a2 = p.PassiveBattleRoyaleAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
+a3 = p.PassiveBattleRoyaleAgent(None,"C",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
 agents = [a1,a2,a3]
 
 w1 = b.BattleRoyale(agents)
@@ -75,14 +76,15 @@ for i in range(N):
 
     avg_t+=t
 
+    avg_r+=a1.reward
+
     for machine in machines:
-        avg_r+=machine.agent.reward
         machine.world.reset()
 
     if i%interval == 0 and i!=0:
         x.append(i)
         y.append(avg_t/interval)
-        y_r.append(avg_r/interval/4)
+        y_r.append(avg_r/interval)
         avg_t = 0
         avg_r = 0
         print(i)
@@ -97,9 +99,9 @@ plt.show()
 
 plt.plot(x,y_r)
 plt.xlabel("Time")
-plt.ylabel("Average reward across all agents")
+plt.ylabel("Average reward for hunting agent")
 plt.show()
 
 for machine in machines:
-    machine.agent.value_approximator.model.save("HIGHERKILLREWARD"+machine.name)
+    machine.agent.value_approximator.model.save("HUNT"+machine.name)
 

@@ -75,7 +75,7 @@ class BattleRoyale(World):
                 if a != agent and sqrt((a_x - self_x)**2 + (a_y - self_y)**2)<=1 and ((atan2((a_y-self_y),(a_x-self_x)))<=((self_theta + pi/8)%(2*pi)) or (atan2((a_y-self_y),(a_x-self_x)))>=((self_theta - pi/8)%2*pi)):
                     start_locs = [[sqrt(30)/2,0,pi],[(sqrt(30)/2)*cos(2*pi/3),(sqrt(30)/2)*sin(2*pi/3),5*pi/3],[-(sqrt(30)/2)*cos(5*pi/3),(sqrt(30)/2)*sin(5*pi/3),2*pi/3 - pi/2]]
                     self.dictionary[a.name] = start_locs[self.agents.index(a)]
-                    reward = 5 if not hit else 10
+                    reward = 10 if not hit else 20 #previously 5 and 10
                     hit = True
 
             if not hit:
