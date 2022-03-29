@@ -4,7 +4,7 @@ from textwrap import indent
 from sympy import Q
 from cf_agent import CFAgent
 from connect_four import ConnectFour
-from value_aproximator import CFValueApproximator
+from archive.value_aproximator import CFValueApproximator
 import numpy as np
 import random
 

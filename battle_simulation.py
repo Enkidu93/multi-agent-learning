@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 def no_delay():
     return 0
 
-N = 50_000
+N = 1000
 ALPHA = 0.6
 EPSILON = 0.6
 ALPHA_DECAY = 0.9999
@@ -46,9 +46,9 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-# a1.value_approximator.model = load_model(m1.name)
-# a2.value_approximator.model = load_model(m2.name)
-# a3.value_approximator.model = load_model(m3.name)
+# a1.value_approximator.model = load_model("model\\"+m1.name)
+# a2.value_approximator.model = load_model("model\\"+m2.name)
+# a3.value_approximator.model = load_model("model\\"+m3.name)
 
 # a1.has_model = True
 # a2.has_model = True
@@ -101,5 +101,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 for machine in machines:
-    machine.agent.value_approximator.model.save("HIGHERKILLREWARD"+machine.name)
+    machine.agent.value_approximator.model.save("model\\HIGHERKILLREWARD"+machine.name)
 
