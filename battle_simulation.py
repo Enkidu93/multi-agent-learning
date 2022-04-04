@@ -1,17 +1,18 @@
 import battle_royale as b
 import machine as m
-import networkagent as n
+# import networkagent as n
+import newnetworkagent as n
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 def no_delay():
     return 0
 
-N = 1000
-ALPHA = 0.6
-EPSILON = 0.6
-ALPHA_DECAY = 0.9999
-EPSILON_DECAY = 0.9999
+N = 500
+ALPHA = 0.8
+EPSILON = 0.8
+ALPHA_DECAY = 0.99
+EPSILON_DECAY = 0.99
 
 a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
 a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
@@ -46,13 +47,13 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-# a1.value_approximator.model = load_model("model\\"+m1.name)
-# a2.value_approximator.model = load_model("model\\"+m2.name)
-# a3.value_approximator.model = load_model("model\\"+m3.name)
+a1.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m1.name)
+a2.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m2.name)
+a3.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m3.name)
 
-# a1.has_model = True
-# a2.has_model = True
-# a3.has_model = True
+a1.has_model = True
+a2.has_model = True
+a3.has_model = True
 
 x = list()
 y = list()
@@ -62,16 +63,20 @@ avg_t = 0
 avg_r = 0
 
 for i in range(N):
-    interval = 500
+    # print(i)
+    interval = 50
 
     quit = False
     t = 0
-    while(t<10_000 and not quit):
+    # while(t<(10*interval*(N+i)/N) and not quit):
+    while(t<30*100 and not quit):
         for machine in machines:
             machine.activate(t)
             if(machine.world.episode_complete):
                 quit = True
+        # print(t)
         t+=30
+        
 
     avg_t+=t
 
@@ -101,5 +106,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 for machine in machines:
-    machine.agent.value_approximator.model.save("model\\HIGHERKILLREWARD"+machine.name)
+    machine.agent.value_approximator.model.save("model\\NEW"+machine.name)
 

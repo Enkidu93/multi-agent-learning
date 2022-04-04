@@ -86,9 +86,9 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m1.name)
-        a2.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m2.name)
-        a3.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m3.name)
+        a1.value_approximator.model = load_model("model\\NEW"+m1.name)
+        a2.value_approximator.model = load_model("model\\NEW"+m2.name)
+        a3.value_approximator.model = load_model("model\\NEW"+m3.name)
 
         a1.has_model = True
         a2.has_model = True
