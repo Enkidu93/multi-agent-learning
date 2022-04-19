@@ -14,6 +14,7 @@ class NetworkAgent(Agent):
         self.has_model = False
         self.last_memory = []
         self.memories = [[],[]]
+        self.q_values:dict[tuple,dict[int,float]] = dict()
     
     def __str__(self):
         out = self.name + " "
@@ -40,6 +41,8 @@ class NetworkAgent(Agent):
 
         best_action = None
 
+        state = tuple(self.world.translateAbsoluteState(self))
+
         if len(self.world.actions) == 0:
             return None 
 
@@ -48,7 +51,12 @@ class NetworkAgent(Agent):
         else:
             highest_q = -100
             for action in self.world.actions:
-                cur_q = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
+                state_dict = self.q_values.get(state, None)
+                cached_q = state_dict.get(action, None) if state_dict is not None else None
+                if cached_q is not None:
+                    cur_q = self.q_values.get(state).get(action)
+                else:
+                    cur_q = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
                 if cur_q > highest_q:
                     highest_q = cur_q
                     best_action = action
@@ -64,14 +72,14 @@ class NetworkAgent(Agent):
     def save(self, filename):
         return super().save(filename)
 
-    def reset(self, reset_qvalues=False, reset_epsilon_to=0):
+    def reset(self, reset_qvalues=True, reset_epsilon_to=0):
         self.reward = 0
         self.prev_action = None
         self.prev_state = None
         if reset_epsilon_to:
             self.epsilon = reset_epsilon_to
         if reset_qvalues:
-            self.q_values = dict()
+            self.q_values:dict[tuple,dict[int,float]] = dict()
 
     def take_action(self) -> tuple[str,list]:
         self.prev_state = tuple(self.world.translateAbsoluteState(self))
@@ -81,19 +89,40 @@ class NetworkAgent(Agent):
         reward = result[0]
         self.reward += reward
 
+        new_state = tuple(self.world.translateAbsoluteState(self))
+
+
         self.prev_action = action
 
         best_next_q = -100 # may need to rechoose appropriate value
 
+        # printAction(action)
+        # print(self.epsilon)
+
         # find max for all a of Q(s_t+1, a)
         for action in self.world.actions:
-            q_value = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
+            q_value = best_next_q
+            state_dict = self.q_values.get(new_state, None)
+            cached_q = state_dict.get(action, None) if state_dict is not None else None
+            if cached_q is not None:
+                q_value = self.q_values.get(new_state).get(action)
+            else:
+                q_value = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
+                self.q_values[new_state] = dict()
+                self.q_values[new_state][action] = q_value
             if q_value > best_next_q:
                 best_next_q = q_value
 
-        # Q-learning value adjustment
         old_q = self.value_approximator.model.predict(np.array([list(self.prev_state)  + [self.prev_action]]))[0][0]
+        if self.q_values.get(self.prev_state, None) is not None and self.q_values.get(self.prev_state).get(self.prev_action, None) is not None:
+            # print("CACHED")
+            old_q = self.q_values.get(self.prev_state).get(self.prev_action)
+        else:
+            old_q = self.value_approximator.model.predict(np.array([list(self.prev_state)  + [self.prev_action]]))[0][0]
+
+        # Q-learning value adjustment
         self.last_memory = [self.world.translateAbsoluteState(self) + [self.prev_action], old_q + self.alpha*(reward + self.gamma*(best_next_q) - old_q)]
+        # self.q_values[new_state][self.prev_action] = old_q + self.alpha*(reward + self.gamma*(best_next_q) - old_q)
 
         # self.refit_model()
 
@@ -104,4 +133,13 @@ class NetworkAgent(Agent):
         # return update
         return (self.name, self.world.dictionary.get(self.name))
 
+def printAction(action):
+    if action == 0:
+        print("CCW")
+    if action == 1:
+        print("CW")
+    if action == 2:
+        print("STEP")
+    if action == 3:
+        print("ATTACK")
 

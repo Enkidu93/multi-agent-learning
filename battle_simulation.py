@@ -8,11 +8,13 @@ from tensorflow.keras.models import load_model
 def no_delay():
     return 0
 
-N = 500
-ALPHA = 0.8
-EPSILON = 0.8
-ALPHA_DECAY = 0.99
-EPSILON_DECAY = 0.99
+N = 10
+ALPHA = 0
+EPSILON = 0
+ALPHA_DECAY = 1.0
+EPSILON_DECAY = 1.0
+INTERVAL = 10 # episodes
+
 
 a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
 a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
@@ -47,9 +49,9 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-a1.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m1.name)
-a2.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m2.name)
-a3.value_approximator.model = load_model("model\\HIGHERKILLREWARD"+m3.name)
+a1.value_approximator.model = load_model("model\\WEANED"+m1.name)
+a2.value_approximator.model = load_model("model\\WEANED"+m2.name)
+a3.value_approximator.model = load_model("model\\WEANED"+m3.name)
 
 a1.has_model = True
 a2.has_model = True
@@ -62,18 +64,23 @@ y_r =list()
 avg_t = 0
 avg_r = 0
 
-for i in range(N):
+interval = INTERVAL 
+for i in range(N+1):
     # print(i)
-    interval = 50
 
     quit = False
     t = 0
     # while(t<(10*interval*(N+i)/N) and not quit):
-    while(t<30*100 and not quit):
+    while(t<30*500 and not quit):
         for machine in machines:
             machine.activate(t)
             if(machine.world.episode_complete):
                 quit = True
+    # ############ STATIC ################
+    #     m1.activate(t)
+    #     if m1.world.episode_complete:
+    #         quit = True
+    # ####################################
         # print(t)
         t+=30
         
@@ -84,15 +91,24 @@ for i in range(N):
         avg_r+=machine.agent.reward
         machine.world.reset()
 
+    # ############ STATIC ################
+    # avg_r += m1.agent.reward
+    # m1.world.reset()
+    # ####################################
+
     if i%interval == 0 and i!=0:
         x.append(i)
         y.append(avg_t/interval)
-        y_r.append(avg_r/interval/4)
+        y_r.append(avg_r/interval/3)
+        print(i,avg_t/interval,avg_r/interval/3)
         avg_t = 0
         avg_r = 0
-        print(i)
-        for machine in machines:
-            machine.agent.refit_model()
+        # for machine in machines:
+        #     machine.agent.refit_model()
+    # ############ STATIC ################
+    #     m1.agent.refit_model()
+    #     m1.agent.value_approximator.model.save("model\\TEST"+m1.name)
+    # ####################################
 
 
 plt.plot(x,y)
@@ -105,6 +121,6 @@ plt.xlabel("Time")
 plt.ylabel("Average reward across all agents")
 plt.show()
 
-for machine in machines:
-    machine.agent.value_approximator.model.save("model\\NEW"+machine.name)
+# for machine in machines:
+#     machine.agent.value_approximator.model.save("model\\WEANED"+machine.name)
 

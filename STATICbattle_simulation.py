@@ -7,13 +7,16 @@ from tensorflow.keras.models import load_model
 def no_delay():
     return 0
 
-N = 10_000
-ALPHA = 0.1
-EPSILON = 0.1
+N = 20_000
+ALPHA = 0.5
+EPSILON = 0.5
+ALPHA_DECAY = 0.999
+EPSILON_DECAY = 0.999
 
-a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA)
-a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA)
-a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA)
+
+a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
+a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
+a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
 agents = [a1,a2,a3]
 
 w1 = b.BattleRoyale(agents)
@@ -44,11 +47,11 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-# a1.value_approximator.model = load_model(m1.name)
-# a2.value_approximator.model = load_model(m2.name)
-# a3.value_approximator.model = load_model(m3.name)
+a1.value_approximator.model = load_model("model\\STATIC"+m1.name)
+# a2.value_approximator.model = load_model("model\\STATIC"+m2.name)
+# a3.value_approximator.model = load_model("model\\STATIC"+m3.name)
 
-# a1.has_model = True
+a1.has_model = True
 # a2.has_model = True
 # a3.has_model = True
 
@@ -61,6 +64,8 @@ avg_r = 0
 
 for i in range(N):
     interval = 500
+
+    print(i)
 
     quit = False
     t = 0
@@ -77,6 +82,7 @@ for i in range(N):
     m1.world.reset()
 
     if i%interval == 0 and i!=0:
+        print(i,avg_t/interval,avg_r/interval/4)
         x.append(i)
         y.append(avg_t/interval)
         y_r.append(avg_r/interval/4)
@@ -97,5 +103,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 machine = m1
-machine.agent.value_approximator.model.save("STATIC"+machine.name)
+machine.agent.value_approximator.model.save("model\\STATIC2"+machine.name)
 

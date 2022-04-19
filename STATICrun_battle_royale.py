@@ -2,7 +2,7 @@ import arcade
 from math import sqrt, sin, pi, cos, degrees
 import battle_royale as b
 import machine as m
-import networkagent as n
+import newnetworkagent as n
 from tensorflow.keras.models import load_model
 
 SCALE = 1
@@ -86,7 +86,7 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("STATIC"+m1.name)
+        a1.value_approximator.model = load_model("model//TEST"+m1.name)
 
         a1.has_model = True
     
