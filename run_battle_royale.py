@@ -3,7 +3,7 @@ from math import sqrt, sin, pi, cos, degrees, floor
 import battle_royale as b
 import machine as m
 import networkagent as n
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 
 SCALE = 1
 SCREEN_WIDTH = floor(SCALE*500)
@@ -86,9 +86,9 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("model\\WEANED"+m1.name)
-        a2.value_approximator.model = load_model("model\\WEANED"+m2.name)
-        a3.value_approximator.model = load_model("model\\WEANED"+m3.name)
+        a1.value_approximator.model = load_model("model\\NEW_TAB4"+m1.name)
+        a2.value_approximator.model = load_model("model\\NEW_TAB4"+m2.name)
+        a3.value_approximator.model = load_model("model\\NEW_TAB4"+m3.name)
 
         a1.has_model = True
         a2.has_model = True
