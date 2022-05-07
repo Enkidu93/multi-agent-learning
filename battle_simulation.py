@@ -4,9 +4,13 @@ import machine as m
 import newnetworkagent as n
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
+from generate_delay import WeibullDelayGenerator
+
+gen = WeibullDelayGenerator(seed=1)
 
 def no_delay():
-    return 0
+    # return 0
+    return gen.generate_weibulldist_delay()
 
 N = 10
 ALPHA = 0
@@ -66,7 +70,7 @@ avg_r = 0
 
 interval = INTERVAL 
 for i in range(N+1):
-    # print(i)
+    print(i)
 
     quit = False
     t = 0

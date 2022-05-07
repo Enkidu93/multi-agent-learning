@@ -4,6 +4,7 @@ import battle_royale as b
 import machine as m
 import networkagent as n
 from tensorflow.keras.models import load_model
+from generate_delay import WeibullDelayGenerator
 
 SCALE = 1
 SCREEN_WIDTH = floor(SCALE*500)
@@ -11,8 +12,12 @@ SCREEN_HEIGHT = floor(SCALE*500)
 ALPHA = 0.1
 EPSILON = 0.0
 
+gen = WeibullDelayGenerator(seed=10)
+
 def no_delay():
-    return 0
+    # return 0
+    return gen.generate_weibulldist_delay()
+
 
 class BattleRoyaleWindow(arcade.Window):
     def __init__(self,width,height):
@@ -66,9 +71,9 @@ class BattleRoyaleWindow(arcade.Window):
         a2.world = w2
         a3.world = w3
 
-        m1 = m.Machine(a1,"VM1")
-        m2 = m.Machine(a2,"VM2")
-        m3 = m.Machine(a3,"VM3")
+        m1 = m.Machine(a1,"A") #For now, these names have to match corresponding agents
+        m2 = m.Machine(a2,"B")
+        m3 = m.Machine(a3,"C")
         self.machines = [m1,m2,m3]
 
         c1_2 = m.Connection(m1,m2,no_delay)
@@ -86,9 +91,9 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("model\\WEANED"+m1.name)
-        a2.value_approximator.model = load_model("model\\WEANED"+m2.name)
-        a3.value_approximator.model = load_model("model\\WEANED"+m3.name)
+        a1.value_approximator.model = load_model("model\\WEANEDVM1")
+        a2.value_approximator.model = load_model("model\\WEANEDVM2")
+        a3.value_approximator.model = load_model("model\\WEANEDVM3")
 
         a1.has_model = True
         a2.has_model = True
@@ -116,6 +121,7 @@ class BattleRoyaleWindow(arcade.Window):
     def on_key_press(self, key, modifiers):
         if (key == arcade.key.RIGHT or key == arcade.key.LEFT) and not self.quit:
             raw_pos = get_new_positions(self.machines,self.t)
+            self.t += 30
             if raw_pos is None:
                 self.quit = True
                 # print(self.agents[0].q_values)

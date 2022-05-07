@@ -2,6 +2,7 @@ from world import World
 from networkagent import NetworkAgent
 from math import cos, sin, pi, sqrt, atan, atan2
 import numpy as np
+from message import Message
 
 R_CCW = 0
 R_CW = 1
@@ -23,6 +24,7 @@ class BattleRoyale(World):
                 break
         self.actions = [R_CCW, R_CW, STEP, ATTACK]
         self.episode_complete = False
+        self.suspect_episode_complete = False
     
 
     def reset(self):
@@ -37,6 +39,7 @@ class BattleRoyale(World):
                 print("Too many agents...")
                 break
         self.episode_complete = False
+        self.suspect_episode_complete = False
     
     def step(self, action:int, agent:NetworkAgent):
         reward = -0.5
@@ -81,15 +84,17 @@ class BattleRoyale(World):
             if not hit:
                 reward = -1
             else:
-                self.episode_complete = True
+                # self.episode_complete = True
+                self.suspect_episode_complete = True
             
             # print(agent.name, "took action", action)
 
         return (reward, self.dictionary)
     
-    def process(self, message_content:tuple[str,tuple]):
-        agent_name = message_content[0]
-        agent_state = message_content[1]
+    # def process(self, message_content:tuple[str,tuple]):
+    def process(self, message:Message):
+        agent_name = message.content[0]
+        agent_state = message.content[1]
         self.dictionary[agent_name] = agent_state
     
     def translateAbsoluteState(self,agent:NetworkAgent)->list:
