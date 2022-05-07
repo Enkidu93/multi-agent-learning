@@ -1,5 +1,5 @@
-from tensorflow.keras import Sequential, Model, Input
-from tensorflow.keras.layers import Dense, Conv2D
+from keras import Sequential, Model, Input
+from keras.layers import Dense, Conv2D
 import numpy as np
 
 class FunctionApproximator():

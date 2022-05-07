@@ -1,7 +1,7 @@
 import battle_royale as b
 import machine as m
-# import networkagent as n
-import newnetworkagent as n
+import networkagent as n
+# import newnetworkagent as n
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 from generate_delay import WeibullDelayGenerator
@@ -12,9 +12,9 @@ def no_delay():
     # return 0
     return gen.generate_weibulldist_delay()
 
-N = 10
-ALPHA = 0
-EPSILON = 0
+N = 100
+ALPHA = 0.0
+EPSILON = 0.0
 ALPHA_DECAY = 1.0
 EPSILON_DECAY = 1.0
 INTERVAL = 10 # episodes
@@ -53,9 +53,9 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-a1.value_approximator.model = load_model("model\\WEANED"+m1.name)
-a2.value_approximator.model = load_model("model\\WEANED"+m2.name)
-a3.value_approximator.model = load_model("model\\WEANED"+m3.name)
+a1.value_approximator.model = load_model("model\\NEW_TAB4"+m1.name)
+a2.value_approximator.model = load_model("model\\NEW_TAB4"+m2.name)
+a3.value_approximator.model = load_model("model\\NEW_TAB4"+m3.name)
 
 a1.has_model = True
 a2.has_model = True
@@ -107,8 +107,10 @@ for i in range(N+1):
         print(i,avg_t/interval,avg_r/interval/3)
         avg_t = 0
         avg_r = 0
-        # for machine in machines:
-        #     machine.agent.refit_model()
+        for machine in machines:
+            machine.agent.refit_model()
+            # machine.agent.value_approximator.model.save("model\\NEW_TAB4"+machine.name)
+
     # ############ STATIC ################
     #     m1.agent.refit_model()
     #     m1.agent.value_approximator.model.save("model\\TEST"+m1.name)
@@ -126,5 +128,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 # for machine in machines:
-#     machine.agent.value_approximator.model.save("model\\WEANED"+machine.name)
+#     machine.agent.value_approximator.model.save("model\\NEW_TAB4"+machine.name)
 
