@@ -94,7 +94,7 @@ class NetworkAgent(Agent):
 
         self.prev_action = action
 
-        best_next_q = -100 # may need to rechoose appropriate value
+        best_next_q = -1000 # may need to rechoose appropriate value
 
         # printAction(action)
         # print(self.epsilon)

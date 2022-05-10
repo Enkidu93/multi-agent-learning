@@ -3,21 +3,21 @@ import machine as m
 import networkagent as n
 # import newnetworkagent as n
 import matplotlib.pyplot as plt
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from generate_delay import WeibullDelayGenerator
 
-gen = WeibullDelayGenerator(seed=1)
+gen = WeibullDelayGenerator(seed=1,m=10,d=10)
 
 def no_delay():
     # return 0
     return gen.generate_weibulldist_delay()
 
-N = 100
+N = 5
 ALPHA = 0.0
-EPSILON = 0.0
+EPSILON = 1.0
 ALPHA_DECAY = 1.0
 EPSILON_DECAY = 1.0
-INTERVAL = 10 # episodes
+INTERVAL = 5 # episodes
 
 
 a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA,decay_alpha=ALPHA_DECAY,decay_epsilon=EPSILON_DECAY)
@@ -33,9 +33,9 @@ a1.world = w1
 a2.world = w2
 a3.world = w3
 
-m1 = m.Machine(a1,"VM1")
-m2 = m.Machine(a2,"VM2")
-m3 = m.Machine(a3,"VM3")
+m1 = m.Machine(a1,a1.name)
+m2 = m.Machine(a2,a2.name)
+m3 = m.Machine(a3,a3.name)
 machines = [m1,m2,m3]
 
 c1_2 = m.Connection(m1,m2,no_delay)
@@ -53,9 +53,9 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-a1.value_approximator.model = load_model("model\\NEW_TAB4"+m1.name)
-a2.value_approximator.model = load_model("model\\NEW_TAB4"+m2.name)
-a3.value_approximator.model = load_model("model\\NEW_TAB4"+m3.name)
+a1.value_approximator.model = load_model("model\\NEW_TAB4VM1")
+a2.value_approximator.model = load_model("model\\NEW_TAB4VM2")
+a3.value_approximator.model = load_model("model\\NEW_TAB4VM3")
 
 a1.has_model = True
 a2.has_model = True
@@ -69,7 +69,7 @@ avg_t = 0
 avg_r = 0
 
 interval = INTERVAL 
-for i in range(N+1):
+for i in range(1,N+1,1):
     print(i)
 
     quit = False
@@ -100,7 +100,7 @@ for i in range(N+1):
     # m1.world.reset()
     # ####################################
 
-    if i%interval == 0 and i!=0:
+    if i%interval == 0:
         x.append(i)
         y.append(avg_t/interval)
         y_r.append(avg_r/interval/3)
@@ -128,5 +128,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 # for machine in machines:
-#     machine.agent.value_approximator.model.save("model\\NEW_TAB4"+machine.name)
+#     machine.agent.value_approximator.model.save("model\\FRESH"+machine.name)
 

@@ -48,11 +48,11 @@ class NetworkAgent(Agent):
         if rand <= self.epsilon:
             best_action = random.choice(self.world.actions)
         else:
-            highest_q = -100
+            highest_q = -1000
             tabular_actions = self.q_values.get(tuple(self.world.translateAbsoluteState(self)),None)
             if tabular_actions is not None:
                 for action in self.world.actions:
-                    cur_q = -100
+                    cur_q = -1000
                     tabular_q = tabular_actions.get(action,None)
                     if tabular_q is None and self.has_model:
                         cur_q = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]

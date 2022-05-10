@@ -38,8 +38,8 @@ class Machine:
         self.messages.put(message)
     
     def process(self, message:ComplexMessage):
-        out = ["Sender: " + str(message.sender) + " SEQ: " + str(message.seq_num) + " Time: " + str(message.time) + " Proposal: " + message.proposal for message in self.messages.queue]
-        print(self.name, ":", out)
+        # out = ["Sender: " + str(message.sender) + " SEQ: " + str(message.seq_num) + " Time: " + str(message.time) + " Proposal: " + message.proposal for message in self.messages.queue]
+        # print(self.name, ":", out)
         if message.seq_num > self.last_received_from.get(message.sender,-1):
             if message.proposal == "proposal":
                 sender_state = self.world.dictionary.get(message.sender) # BETTER TO MAKE THIS A FUNCTION IN WORLD!!!
