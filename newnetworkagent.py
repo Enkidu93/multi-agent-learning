@@ -14,7 +14,9 @@ class NetworkAgent(Agent):
         self.has_model = False
         self.last_memory = []
         self.memories = [[],[]]
-        self.q_values:dict[tuple,dict[int,float]] = dict()
+        self.q_values = dict()
+        self.times_used_cached = 0
+        self.times_used_model = 0
     
     def __str__(self):
         out = self.name + " "
@@ -35,7 +37,7 @@ class NetworkAgent(Agent):
         self.memories = [[],[]]
 
 
-    def get_best_action(self) -> int:
+    def get_best_action(self):
         
         rand = random.random()
 
@@ -48,21 +50,24 @@ class NetworkAgent(Agent):
 
         if rand <= self.epsilon:
             best_action = random.choice(self.world.actions)
+            return best_action
         else:
             highest_q = -100
             for action in self.world.actions:
                 state_dict = self.q_values.get(state, None)
                 cached_q = state_dict.get(action, None) if state_dict is not None else None
                 if cached_q is not None:
+                    self.times_used_cached += 1
                     cur_q = self.q_values.get(state).get(action)
                 else:
+                    self.times_used_model += 1
                     cur_q = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
                 if cur_q > highest_q:
                     highest_q = cur_q
                     best_action = action
        
-        self.epsilon *= self.decay_epsilon
-        self.alpha *= self.decay_alpha
+        # self.epsilon *= self.decay_epsilon
+        # self.alpha *= self.decay_alpha
 
         if best_action is None:
             best_action = random.choice(self.world.actions)
@@ -79,9 +84,9 @@ class NetworkAgent(Agent):
         if reset_epsilon_to:
             self.epsilon = reset_epsilon_to
         if reset_qvalues:
-            self.q_values:dict[tuple,dict[int,float]] = dict()
+            self.q_values = dict()
 
-    def take_action(self) -> tuple[str,list]:
+    def take_action(self):
         self.prev_state = tuple(self.world.translateAbsoluteState(self))
 
         action = self.get_best_action()
@@ -106,14 +111,16 @@ class NetworkAgent(Agent):
             cached_q = state_dict.get(action, None) if state_dict is not None else None
             if cached_q is not None:
                 q_value = self.q_values.get(new_state).get(action)
+                self.times_used_cached += 1
             else:
                 q_value = self.value_approximator.model.predict(np.array([self.world.translateAbsoluteState(self) + [action]]))[0][0]
                 self.q_values[new_state] = dict()
                 self.q_values[new_state][action] = q_value
+                self.times_used_model += 1
             if q_value > best_next_q:
                 best_next_q = q_value
 
-        old_q = self.value_approximator.model.predict(np.array([list(self.prev_state)  + [self.prev_action]]))[0][0]
+        # old_q = self.value_approximator.model.predict(np.array([list(self.prev_state)  + [self.prev_action]]))[0][0]
         if self.q_values.get(self.prev_state, None) is not None and self.q_values.get(self.prev_state).get(self.prev_action, None) is not None:
             # print("CACHED")
             old_q = self.q_values.get(self.prev_state).get(self.prev_action)
@@ -122,7 +129,7 @@ class NetworkAgent(Agent):
 
         # Q-learning value adjustment
         self.last_memory = [self.world.translateAbsoluteState(self) + [self.prev_action], old_q + self.alpha*(reward + self.gamma*(best_next_q) - old_q)]
-        # self.q_values[new_state][self.prev_action] = old_q + self.alpha*(reward + self.gamma*(best_next_q) - old_q)
+        self.q_values[new_state][self.prev_action] = old_q + self.alpha*(reward + self.gamma*(best_next_q) - old_q)
 
         # self.refit_model()
 

@@ -4,9 +4,9 @@ import numpy as np
 
 class FunctionApproximator():
     def __init__(self) -> None:
-        input = Input(shape=(9)) # (wt, wr, at, ar, adt, bt, br, bdt, action)
-        d1 = Dense(50,activation='relu')(input)
-        d2 = Dense(50,activation='relu')(d1)
+        input = Input(shape=(12)) # (wt, wr, at, ar, adt, bt, br, bdt, action1, action2, action3, action4)
+        d1 = Dense(12,activation='tanh')(input)
+        d2 = Dense(6,activation='tanh')(d1)
         output = Dense(1,activation="linear")(d2)
 
         self.model = Model(inputs=[input],outputs=output)
@@ -26,3 +26,6 @@ class FunctionApproximator():
 # print(test.model.predict(xhat)[0][0])
 # xhat = np.array([[0,0,1,1,0,0,1,1,0]])
 # print(test.model.predict(xhat)[0][0])
+
+
+# WTKill -> alpha + 180 >= 2*theta

@@ -1,3 +1,4 @@
+import pandas as pd
 import arcade
 from math import sqrt, sin, pi, cos, degrees, floor
 import battle_royale as b
@@ -14,6 +15,7 @@ EPSILON = 0.0
 
 gen = WeibullDelayGenerator(seed=10)
 
+
 def no_delay():
     # return 0
     return gen.generate_weibulldist_delay()
@@ -29,24 +31,24 @@ class BattleRoyaleWindow(arcade.Window):
         self.quit = False
 
         self.a = arcade.Sprite("sprite.png",SCALE*(0.15))
-        self.a.center_x = SCALE*(10*sqrt(30)*b.SCALE_DISTANCE+250)
-        self.a.center_y = SCALE*(10*0*b.SCALE_DISTANCE+250)
+        self.a.center_x = SCALE*(10*sqrt(30)+250)
+        self.a.center_y = SCALE*(10*0+250)
         self.a.angle = degrees(pi)
         self.a.change_angle = degrees(pi)
         self.a.change_x = self.a.center_x
         self.a.change_y = self.a.center_y
 
         self.b = arcade.Sprite("sprite.png",SCALE*0.15)
-        self.b.center_x = SCALE*(10*sqrt(30)*cos(2*pi/3)*b.SCALE_DISTANCE+250)
-        self.b.center_y = SCALE*(10*sqrt(30)*sin(2*pi/3)*b.SCALE_DISTANCE+250)
+        self.b.center_x = SCALE*(10*sqrt(30)*cos(2*pi/3)+250)
+        self.b.center_y = SCALE*(10*sqrt(30)*sin(2*pi/3)+250)
         self.b.angle = degrees(5*pi/3)
         self.b.change_angle = degrees(5*pi/3)
         self.b.change_x = self.b.center_x
         self.b.change_y = self.b.center_y
 
         self.c = arcade.Sprite("sprite.png",SCALE*0.15)
-        self.c.center_x = SCALE*(-10*sqrt(30)*cos(5*pi/3)*b.SCALE_DISTANCE+250)
-        self.c.center_y = SCALE*(10*sqrt(30)*sin(5*pi/3)*b.SCALE_DISTANCE+250)
+        self.c.center_x = SCALE*(-10*sqrt(30)*cos(5*pi/3)+250)
+        self.c.center_y = SCALE*(10*sqrt(30)*sin(5*pi/3)+250)
         self.c.angle = degrees(2*pi/3 - pi/2)
         self.c.change_angle = degrees(2*pi/3 - pi/2)
         self.c.change_x = self.c.center_x
@@ -57,6 +59,7 @@ class BattleRoyaleWindow(arcade.Window):
         self.agent_reps.append(self.b)
         self.agent_reps.append(self.c)
 
+        df = pd.read_csv('teststatsNOV14_101.csv')
 
         a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA)
         a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,is_heuristic=True)
@@ -91,7 +94,7 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("model/NOV14DISTANCED99")
+        # a1.value_approximator.model = load_model("model/OCT19TEST17")
         # a2.value_approximator.model = load_model("model\\WEANEDVM2")
         # a3.value_approximator.model = load_model("model\\WEANEDVM3")
 
@@ -161,5 +164,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
