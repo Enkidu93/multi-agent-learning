@@ -1,15 +1,15 @@
 import battle_royale as b
 import machine as m
-import networkagent as n
+import newnetworkagent as n
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 def no_delay():
     return 0
 
-N = 20_000
-ALPHA = 0.5
-EPSILON = 0.5
+N = 1_000
+ALPHA = 1.0
+EPSILON = 0.8
 ALPHA_DECAY = 0.999
 EPSILON_DECAY = 0.999
 
@@ -47,11 +47,11 @@ c3_2 = m.Connection(m3,m2,no_delay)
 m3.add_connection(m1,c3_1)
 m3.add_connection(m2,c3_2)
 
-a1.value_approximator.model = load_model("model\\STATIC"+m1.name)
+# a1.value_approximator.model = load_model("model\\STATIC"+m1.name)
 # a2.value_approximator.model = load_model("model\\STATIC"+m2.name)
 # a3.value_approximator.model = load_model("model\\STATIC"+m3.name)
 
-a1.has_model = True
+# a1.has_model = True
 # a2.has_model = True
 # a3.has_model = True
 
@@ -63,7 +63,7 @@ avg_t = 0
 avg_r = 0
 
 for i in range(N):
-    interval = 500
+    interval = 50
 
     print(i)
 
@@ -90,6 +90,8 @@ for i in range(N):
         avg_r = 0
         print(i)
         m1.agent.refit_model()
+        m1.agent.value_approximator.model.save("model/STATICNEW"+machine.name)
+
 
 
 plt.plot(x,y)
@@ -103,5 +105,5 @@ plt.ylabel("Average reward across all agents")
 plt.show()
 
 machine = m1
-machine.agent.value_approximator.model.save("model\\STATIC2"+machine.name)
+machine.agent.value_approximator.model.save("model/STATICNEW"+machine.name)
 

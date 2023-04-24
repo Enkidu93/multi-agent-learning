@@ -9,7 +9,7 @@ from generate_delay import WeibullDelayGenerator
 SCALE = 1
 SCREEN_WIDTH = floor(SCALE*500)
 SCREEN_HEIGHT = floor(SCALE*500)
-ALPHA = 0.1
+ALPHA = 0.0
 EPSILON = 0.0
 
 gen = WeibullDelayGenerator(seed=10)
@@ -59,8 +59,8 @@ class BattleRoyaleWindow(arcade.Window):
 
 
         a1 = n.NetworkAgent(None,"A",epsilon=EPSILON,alpha=ALPHA)
-        a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA)
-        a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA)
+        a2 = n.NetworkAgent(None,"B",epsilon=EPSILON,alpha=ALPHA,is_heuristic=True)
+        a3 = n.NetworkAgent(None,"C",epsilon=EPSILON,alpha=ALPHA,is_heuristic=True)
         self.agents = [a1,a2,a3]
 
         w1 = b.BattleRoyale(self.agents)
@@ -91,9 +91,9 @@ class BattleRoyaleWindow(arcade.Window):
         m3.add_connection(m1,c3_1)
         m3.add_connection(m2,c3_2)
 
-        a1.value_approximator.model = load_model("model\\WEANEDVM1")
-        a2.value_approximator.model = load_model("model\\WEANEDVM2")
-        a3.value_approximator.model = load_model("model\\WEANEDVM3")
+        a1.value_approximator.model = load_model("model/OCT19TEST17")
+        # a2.value_approximator.model = load_model("model\\WEANEDVM2")
+        # a3.value_approximator.model = load_model("model\\WEANEDVM3")
 
         a1.has_model = True
         a2.has_model = True
@@ -110,6 +110,9 @@ class BattleRoyaleWindow(arcade.Window):
         self.agent_reps.draw()
         if self.quit:
             arcade.draw_text("Game is complete...",SCALE*(SCREEN_WIDTH/2.5),SCALE*(3*SCREEN_HEIGHT/4),arcade.color.WHITE,SCALE*10,SCALE*20,'left')
+            print(self.agents[0].reward)
+            print(self.agents[1].reward)
+            print(self.agents[2].reward)
         arcade.finish_render()
 
     def update(self,delta_time):
@@ -141,7 +144,7 @@ class BattleRoyaleWindow(arcade.Window):
     def on_key_release(self, key, modifiers):
         pass
 
-def get_new_positions(machines:list[m.Machine], t) -> list:
+def get_new_positions(machines, t) -> list:
     for machine in machines:
         machine.activate(t)
         if(machine.world.episode_complete):

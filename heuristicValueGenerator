@@ -1,0 +1,29 @@
+# from function_approximator import FunctionApproximator
+# import numpy as np
+
+# class HeuristicApproximator(FunctionApproximator):
+#     def __init__():
+#         self.model = HeuristicBattleRoyaleModel()
+
+
+
+# class HeuristicBattleRoyaleModel():
+#     def __init__():
+#         pass
+#     def predict(state_action):
+#         closest_opponent_r = max(state_action[2], state_action[5])
+#         if closest_opponent_r == state_action[2]:
+#             closest_opponent = {'r': closest_opponent_r, 'theta':state_action[3], 'reltheta':state_action[4]} 
+#         else:
+#             closest_opponent = {'r': closest_opponent_r, 'theta':state_action[6], 'reltheta':state_action[7]} 
+        
+#         wants_to_kill = closest_opponent["r"] <= 1 and closest_opponent["theta"] <=
+
+# # return [  wall_r,
+# #           wall_dtheta,
+# #           foe1_r,
+# #           foe1_dtheta,
+# #           foe1_reltheta,
+# #           foe2_r,
+# #           foe2_dtheta,
+# #           foe2_reltheta]

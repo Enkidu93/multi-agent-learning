@@ -20,7 +20,12 @@ class Agent:
         else:
             with open(qvals_filename,'r') as q:
                 data = json.loads(q.read())
-                self.q_values = dict((literal_eval(k),v) for k,v in data.items())
+                temp_dict = dict((literal_eval(k),v) for k,v in data.items())
+                self.q_values:dict[tuple,dict[int,float]] = dict()
+                for k, v in temp_dict.items():
+                    self.q_values[k] = dict()
+                    for subk, subv in v.items():
+                        self.q_values[k][int(subk)] = float(subv)
 
     def reset(self,reset_qvalues=False,reset_epsilon_to=0):
         self.world.reset()
